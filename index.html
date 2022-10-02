@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <canvas id="game" width="800" height="600"></canvas>
+</body>
+
+<script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const screenWidth = 800
+    const screenHeight = 600
+    let playerX = 0
+    let playerY = 560
+    let time = 0
+    let t0 = 0
+    const squareSize = 20;
+    let keysPressed = {}
+
+
+    function renderBackground() {
+        ctx.fillStyle = "green";
+        ctx.fillRect(0, 0, screenWidth, screenHeight);
+
+        ctx.fillStyle = "red";
+        ctx.fillRect(0, screenHeight - squareSize, screenWidth, squareSize);
+    }
+
+    function renderPlayer() {
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(playerX, playerY, squareSize, squareSize);
+    }
+
+    function renderTime() {
+        ctx.font = '20px serif';
+        ctx.fillText('Hello world ' + time + "/" + t0, 10, 20);
+    }
+
+    function render() {
+        jump()
+        renderBackground()
+        renderPlayer()
+        renderTime()
+
+    }
+
+    function loop() {
+        setInterval(() => {
+            processKey()
+            render()
+            time += 50
+        }, 50)
+    }
+
+
+    function jump() {
+        if (t0 !== 0) {
+
+            playerY -= (time - t0) / 40 - (time - t0) * (time - t0) / 40000
+        }
+
+        if (playerY > screenHeight - 2 * squareSize) {
+            playerY = screenHeight - 2 * squareSize
+            t0 = 0
+        }
+    }
+
+    function processKey() {
+        if (keysPressed[37]) {
+            playerX -= squareSize
+            if (playerX < 0) {
+                playerX = 0
+            }
+        }
+
+        if (keysPressed[39]) {
+            playerX += squareSize
+        }
+
+        if (keysPressed[38] && playerY === screenHeight - 2 * squareSize) {
+            t0 = time
+        }
+    };
+
+    document.addEventListener('keydown', (event) => {
+        keysPressed[event.keyCode] = true;
+        console.log('keydown', keysPressed)
+    });
+
+    document.addEventListener('keyup', (event) => {
+        delete keysPressed[event.keyCode];
+        console.log('keyup', keysPressed)
+    });
+
+
+    loop()
+
+</script>
+
+</html>
