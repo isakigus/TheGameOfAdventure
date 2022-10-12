@@ -14,6 +14,7 @@
             this.y = y
             this.color = color
             this.ctx = ctx
+            this.block = null
 
             Block.blocks.push(this)
         }
@@ -23,13 +24,47 @@
             this.ctx.fillRect(this.x, this.y, squareSize, squareSize);
         }
 
+        collisionWith() {
+            if (player.x === this.x - squareSize && player.y > this.y - squareSize) {
+
+                player.color = "blue"
+                player.block = "right"
+                return
+            }
+
+            if (player.x === this.x + squareSize && player.y > this.y - squareSize) {
+
+                player.color = "blue"
+                player.block = "left"
+                return
+            }
+
+            if (player.x == this.x && player.y >= this.y - squareSize) {
+
+                player.color = "blue"
+                player.block = "top"
+                player.startJumpTime = 0
+                player.y = this.y - squareSize
+                return
+            }
+
+            player.color = "yellow"
+            player.block = null
+        }
+
         static renderAll() {
             for (const block of Block.blocks) {
-                console.log(block)
+
                 block.render()
             }
         }
 
+        static collision(player) {
+            for (const block of Block.blocks) {
+
+                block.collisionWith(player)
+            }
+        }
     }
 
     class Player {
@@ -73,6 +108,9 @@
     let keysPressed = {}
 
     new Block(200, screenHeight - 2 * squareSize, 'red', ctx)
+    new Block(400, screenHeight - 2 * squareSize, 'red', ctx)
+    new Block(300, screenHeight - 4 * squareSize, 'red', ctx)
+
     const player = new Player(0, 560, 'yellow', ctx)
 
     function renderBackground() {
@@ -83,11 +121,11 @@
         ctx.fillRect(0, screenHeight - squareSize, screenWidth, squareSize);
     }
 
-
-
     function renderTime() {
         ctx.font = '20px serif';
         ctx.fillText('The game of adventure ' + time, 10, 20);
+        ctx.fillText(player.x + "/" + player.y, 10, 40);
+        ctx.fillText(Block.blocks[0].x + "/" + Block.blocks[0].y, 10, 60);
     }
 
     function render() {
@@ -100,7 +138,7 @@
     }
 
     function checkCollision() {
-
+        Block.collision(player)
     }
 
     function loop() {
@@ -118,17 +156,17 @@
 
 
     function processKeys() {
-        if (keysPressed[37]) {
+        if (keysPressed[37] && player.block !== "left") {
             player.x -= squareSize
             if (player.x < 0) {
                 player.x = 0
             }
         }
-        if (keysPressed[39]) {
+        if (keysPressed[39] && player.block !== "right") {
             player.x += squareSize
         }
 
-        if (keysPressed[38] && player.y === screenHeight - 2 * squareSize) {
+        if (keysPressed[38] && player.startJumpTime === 0) {
             player.startJumpTime = time
         }
     };
