@@ -14,7 +14,7 @@
             this.y = y
             this.color = color
             this.ctx = ctx
-            this.block = null
+            this.block = "top"
 
             Block.blocks.push(this)
         }
@@ -25,18 +25,19 @@
         }
 
         collisionWith() {
-            if (player.x === this.x - squareSize && player.y > this.y - squareSize) {
+            console.log(player.x, this.x - squareSize)
+            if (player.x === (this.x - squareSize && player.y <= this.y - squareSize)) {
 
                 player.color = "blue"
                 player.block = "right"
-                return
+                return true
             }
 
-            if (player.x === this.x + squareSize && player.y > this.y - squareSize) {
+            if (player.x === (this.x + squareSize && player.y <= this.y - squareSize)) {
 
                 player.color = "blue"
                 player.block = "left"
-                return
+                return true
             }
 
             if (player.x == this.x && player.y >= this.y - squareSize) {
@@ -44,12 +45,20 @@
                 player.color = "blue"
                 player.block = "top"
                 player.startJumpTime = 0
+                player.fallingTime = 0
                 player.y = this.y - squareSize
-                return
+                return true
             }
 
             player.color = "yellow"
             player.block = null
+
+            if (player.y === 560) {
+                player.block = "top"
+            }
+
+
+            return false
         }
 
         static renderAll() {
@@ -62,7 +71,9 @@
         static collision(player) {
             for (const block of Block.blocks) {
 
-                block.collisionWith(player)
+                if (block.collisionWith(player)) {
+                    break
+                }
             }
         }
     }
@@ -75,7 +86,7 @@
             this.color = color
             this.ctx = ctx
             this.startJumpTime = 0
-
+            this.fallingTime = 0
         }
 
         render() {
@@ -83,10 +94,17 @@
             this.ctx.fillRect(this.x, this.y, squareSize, squareSize);
         }
 
+        gravity(time) {
+
+            if (this.fallingTime !== 0) {
+                this.y += (time - this.fallingTime) * (time - this.fallingTime) / 40000
+            }
+        }
+
         jump(time) {
             if (this.startJumpTime !== 0) {
 
-                this.y -= (time - this.startJumpTime) / 40 - (time - this.startJumpTime) * (time - this.startJumpTime) / 40000
+                this.y -= (time - this.startJumpTime) / 40
             }
 
             if (this.y > screenHeight - 2 * squareSize) {
@@ -151,6 +169,7 @@
 
     function update(time) {
         processKeys()
+        player.gravity(time)
         player.jump(time)
     }
 
@@ -168,6 +187,7 @@
 
         if (keysPressed[38] && player.startJumpTime === 0) {
             player.startJumpTime = time
+            player.fallingTime = time
         }
     };
 
