@@ -32,18 +32,48 @@
 
     }
 
+    class Player {
+
+        constructor(x, y, color, ctx) {
+            this.x = x
+            this.y = y
+            this.color = color
+            this.ctx = ctx
+            this.startJumpTime = 0
+
+        }
+
+        render() {
+            this.ctx.fillStyle = this.color
+            this.ctx.fillRect(this.x, this.y, squareSize, squareSize);
+        }
+
+        jump(time) {
+            if (this.startJumpTime !== 0) {
+
+                this.y -= (time - this.startJumpTime) / 40 - (time - this.startJumpTime) * (time - this.startJumpTime) / 40000
+            }
+
+            if (this.y > screenHeight - 2 * squareSize) {
+                this.y = screenHeight - 2 * squareSize
+                this.startJumpTime = 0
+            }
+        }
+
+    }
+
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
     const screenWidth = 800
     const screenHeight = 600
-    let playerX = 0
-    let playerY = 560
+
     let time = 0
-    let t0 = 0
+
     const squareSize = 20;
     let keysPressed = {}
 
     new Block(200, screenHeight - 2 * squareSize, 'red', ctx)
+    const player = new Player(0, 560, 'yellow', ctx)
 
     function renderBackground() {
         ctx.fillStyle = "green";
@@ -53,22 +83,18 @@
         ctx.fillRect(0, screenHeight - squareSize, screenWidth, squareSize);
     }
 
-    function renderPlayer() {
-        ctx.fillStyle = "yellow";
-        ctx.fillRect(playerX, playerY, squareSize, squareSize);
-    }
+
 
     function renderTime() {
         ctx.font = '20px serif';
-        ctx.fillText('Hello world ' + time + "/" + t0, 10, 20);
+        ctx.fillText('The game of adventure ' + time, 10, 20);
     }
 
     function render() {
         checkCollision()
-        jump()
         renderBackground()
         Block.renderAll()
-        renderPlayer()
+        player.render()
         renderTime()
 
     }
@@ -79,39 +105,31 @@
 
     function loop() {
         setInterval(() => {
-            processKeys()
+            update(time)
             render()
             time += 50
         }, 50)
     }
 
-
-    function jump() {
-        if (t0 !== 0) {
-
-            playerY -= (time - t0) / 40 - (time - t0) * (time - t0) / 40000
-        }
-
-        if (playerY > screenHeight - 2 * squareSize) {
-            playerY = screenHeight - 2 * squareSize
-            t0 = 0
-        }
+    function update(time) {
+        processKeys()
+        player.jump(time)
     }
+
 
     function processKeys() {
         if (keysPressed[37]) {
-            playerX -= squareSize
-            if (playerX < 0) {
-                playerX = 0
+            player.x -= squareSize
+            if (player.x < 0) {
+                player.x = 0
             }
         }
-
         if (keysPressed[39]) {
-            playerX += squareSize
+            player.x += squareSize
         }
 
-        if (keysPressed[38] && playerY === screenHeight - 2 * squareSize) {
-            t0 = time
+        if (keysPressed[38] && player.y === screenHeight - 2 * squareSize) {
+            player.startJumpTime = time
         }
     };
 
