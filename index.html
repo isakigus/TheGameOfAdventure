@@ -7,6 +7,13 @@
 
 <script>
 
+    function assert(condition, message) {
+        if (!condition)
+            throw Error('Assert failed: ' + (message || ''));
+    };
+
+
+
     class Block {
         static blocks = []
         constructor(x, y, color, ctx) {
@@ -25,7 +32,7 @@
         }
 
         collisionWith() {
-            console.log(player.x, this.x - squareSize)
+            // console.log(player.x, this.x - squareSize)
             if (player.x === (this.x - squareSize && player.y <= this.y - squareSize)) {
 
                 player.color = "blue"
@@ -200,6 +207,15 @@
         delete keysPressed[event.keyCode];
         // console.log('keyup', keysPressed)
     });
+
+
+    function test() {
+
+        assert(1 === 3)
+    }
+
+    test()
+
 
 
     loop()
