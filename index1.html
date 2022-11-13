@@ -3,6 +3,9 @@
 
 <body>
     <canvas id="game" width="800" height="600"></canvas>
+
+    <div>Use arrow keys to play</div>
+    <div>Try to reach the green cell</div>
 </body>
 
 <script>
@@ -22,6 +25,7 @@
             this.x = x
             this.y = y
             this.color = color
+            this.color0 = color
             this.ctx = ctx
             this.block = "top"
 
@@ -35,7 +39,7 @@
 
         collisionWith = (player, time) => {
 
-            this.color = "red"
+            this.color = this.color0
 
 
             if ((this.y - player.y <= squareSize)
@@ -211,6 +215,8 @@
     new Block(200, screenHeight - 10 * squareSize, 'red', ctx)
     new Block(220, screenHeight - 10* squareSize, 'red', ctx)
     new Block(240, screenHeight - 10* squareSize, 'red', ctx)
+
+    new Block(500, screenHeight - 14 * squareSize, 'lawnGreen', ctx)
 
 
     const playerSquare = new Player(0, 500, 'yellow', ctx)
