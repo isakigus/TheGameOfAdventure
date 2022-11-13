@@ -2,13 +2,7 @@
 <html>
 
 <body>
-    <h1> Game of Adventure </h1>
-    <span>work in progress </span>
-    <ul>
-        <li><a href="./index1.html">level 1</a></li>
-        <li><a href="./index2.html">level 2</a></li>
-    </ul>
-    <span><I>thank you Imaran</I></span>
+    <canvas id="game" width="800" height="600"></canvas>
 </body>
 
 <script>
@@ -215,8 +209,8 @@
 
 
     new Block(200, screenHeight - 10 * squareSize, 'red', ctx)
-    new Block(220, screenHeight - 10 * squareSize, 'red', ctx)
-    new Block(240, screenHeight - 10 * squareSize, 'red', ctx)
+    new Block(220, screenHeight - 10* squareSize, 'red', ctx)
+    new Block(240, screenHeight - 10* squareSize, 'red', ctx)
 
 
     const playerSquare = new Player(0, 500, 'yellow', ctx)

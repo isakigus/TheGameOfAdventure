@@ -2,13 +2,7 @@
 <html>
 
 <body>
-    <h1> Game of Adventure </h1>
-    <span>work in progress </span>
-    <ul>
-        <li><a href="./index1.html">level 1</a></li>
-        <li><a href="./index2.html">level 2</a></li>
-    </ul>
-    <span><I>thank you Imaran</I></span>
+    <canvas id="game" width="800" height="600"></canvas>
 </body>
 
 <script>
@@ -28,8 +22,10 @@
             this.x = x
             this.y = y
             this.color = color
+            this.color0 = color
             this.ctx = ctx
             this.block = "top"
+            this.moving = false
 
             Block.blocks.push(this)
         }
@@ -41,7 +37,7 @@
 
         collisionWith = (player, time) => {
 
-            this.color = "red"
+            this.color = this.color0 
 
 
             if ((this.y - player.y <= squareSize)
@@ -63,6 +59,7 @@
                 player.block.right = true
                 player.speedX = 0
 
+
             }
 
             if (player.x === this.x + squareSize && Math.abs(player.y - this.y) < squareSize) {
@@ -70,6 +67,7 @@
                 player.block.left = true
                 this.color = "aquamarine"
                 player.speedY = 0
+                player.x = this.x + squareSize
 
             }
 
@@ -104,8 +102,6 @@
                 return
             }
 
-
-
             player.color = "yellow"
             player.block.top = null
 
@@ -115,17 +111,33 @@
             }
 
 
-
             player.speedX = 1
             player.speedY = 1
 
             return false
         }
 
-        static renderAll() {
+        static renderAll(time) {
             for (const block of Block.blocks) {
 
-                block.render()
+                if (block.moving === "right") {
+                    block.x = block.x + 2*Math.cos(time / 1000)
+                }
+
+                if (block.moving === "left") {
+                    block.x = block.x - 2*Math.cos(time / 1000)
+                }
+
+
+                if (block.moving === "up") {
+                    block.y = block.y + 2*Math.cos(time / 1000)
+                }
+
+                if (block.moving === "down") {
+                    block.y = block.y - 2*Math.cos(time / 1000)
+                }
+
+                block.render(time)
             }
         }
 
@@ -192,25 +204,31 @@
     const squareSize = 20;
     let keysPressed = {}
 
-    new Block(200, screenHeight - 2 * squareSize, 'red', ctx)
-    new Block(400, screenHeight - 2 * squareSize, 'red', ctx)
-    new Block(300, screenHeight - 4 * squareSize, 'red', ctx)
-    new Block(300, screenHeight - 3 * squareSize, 'red', ctx)
+    const block1 = new Block(200, screenHeight - 2 * squareSize, 'red', ctx)
 
-    new Block(360, screenHeight - 4 * squareSize, 'red', ctx)
+
+    new Block(300, screenHeight - 4 * squareSize, 'red', ctx)
+    
+    new Block(400, screenHeight - 2 * squareSize, 'red', ctx).moving = "left"
+
+    new Block(300, screenHeight - 3 * squareSize, 'red', ctx).moving = "left"
+    new Block(360, screenHeight - 4 * squareSize, 'red', ctx).moving = "right"
     new Block(380, screenHeight - 3 * squareSize, 'red', ctx)
 
-    new Block(500, screenHeight - 4 * squareSize, 'red', ctx)
-    new Block(480, screenHeight - 3 * squareSize, 'red', ctx)
-    new Block(460, screenHeight - 2 * squareSize, 'red', ctx)
+    new Block(520, screenHeight - 5 * squareSize, 'red', ctx).moving = "left"
+    new Block(500, screenHeight - 4 * squareSize, 'red', ctx).moving = "left"
+    new Block(480, screenHeight - 3 * squareSize, 'red', ctx).moving = "left"
+    new Block(460, screenHeight - 2 * squareSize, 'red', ctx).moving = "left"
 
+    new Block(80, screenHeight - 4 * squareSize, 'red', ctx)
+
+    new Block(120, screenHeight - 4 * squareSize, 'red', ctx)
     new Block(140, screenHeight - 4 * squareSize, 'red', ctx)
-    new Block(160, screenHeight - 4 * squareSize, 'red', ctx)
-    new Block(180, screenHeight - 4 * squareSize, 'red', ctx)
     new Block(200, screenHeight - 4 * squareSize, 'red', ctx)
+    new Block(220, screenHeight - 4 * squareSize, 'red', ctx)
 
-    new Block(200, screenHeight - 6 * squareSize, 'red', ctx)
-    new Block(220, screenHeight - 6 * squareSize, 'red', ctx)
+    new Block(280, screenHeight - 6 * squareSize, 'red', ctx)
+    new Block(260, screenHeight - 6 * squareSize, 'red', ctx).moving = "up"
     new Block(240, screenHeight - 6 * squareSize, 'red', ctx)
 
 
@@ -219,7 +237,28 @@
     new Block(240, screenHeight - 10 * squareSize, 'red', ctx)
 
 
+    new Block(300, screenHeight - 10 * squareSize, 'red', ctx).moving = "down"
+    new Block(400, screenHeight - 10 * squareSize, 'red', ctx)
+
+    new Block(540, screenHeight - 14 * squareSize, 'red', ctx).moving = "right"
+
+    new Block(400, screenHeight - 18 * squareSize, 'red', ctx).moving = "up"
+
+    new Block(260, screenHeight - 22 * squareSize, 'red', ctx).moving = "left"
+
+    new Block(120, screenHeight - 22 * squareSize, 'red', ctx)
+    new Block(80, screenHeight - 24 * squareSize, 'red', ctx)
+
+
+    new Block(300, screenHeight - 24 * squareSize, 'red', ctx).moving = "left"
+    new Block(500, screenHeight - 24 * squareSize, 'red', ctx).moving = "right"
+
+    new Block(700, screenHeight - 28 * squareSize, 'lawnGreen', ctx)
+
+
     const playerSquare = new Player(0, 500, 'yellow', ctx)
+    // const playerSquare = new Player(40, 500, 'crimson', ctx)
+
 
     function renderBackground() {
         ctx.fillStyle = "green";
@@ -240,7 +279,7 @@
     function render(player, time) {
         checkCollision(player, time)
         renderBackground()
-        Block.renderAll()
+        Block.renderAll(time)
         player.render()
         renderTime(player)
 
